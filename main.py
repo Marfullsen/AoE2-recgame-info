@@ -13,6 +13,7 @@ def get_info(input_file:str) -> dict():
     info = dict()
     with open(f'{input_file}', 'rb') as data:
         sumario = Summary(data)
+        
     info['nombre_archivo'] = input_file
     info['duracion_partida'] = mgz.util.convert_to_timestamp(sumario.get_duration()/1000)
     info['punto_de_vista'] = sumario.get_players()[sumario.get_owner()-1]['name']
@@ -22,9 +23,13 @@ def get_info(input_file:str) -> dict():
     info['diplomacia'] = sumario.get_diplomacy()['type']
     info['nombre_mapa'] = en_es['map_names'][sumario.get_map()['name']]
     info['tamano_mapa'] = sumario.get_map()['size'].capitalize()
+    info['bloqueo_diplomacia_equipos'] = 1 if sumario.get_settings()['lock_teams'] else 0
+    info['dificultad'] = en_es['difficulties'][sumario.get_settings()['difficulty'][1].capitalize()]
+    
     for map_size in en_es['map_sizes'].keys():
             if info['tamano_mapa'] in map_size:
                     info['tamano_mapa'] = en_es['map_sizes'][map_size]
+                    
     info['teams'] = ''
     if info['diplomacia'] == 'TG':
         info['teams'] = sumario.get_diplomacy()['team_size']
@@ -41,9 +46,9 @@ def get_info(input_file:str) -> dict():
             civ = sumario.reference['civilizations'][civ]['name']
             equipos[index][jugador]['civ'] = en_es['civilizations'][civ]
             if sumario.get_players()[jugador-1]['winner']:
-                equipos[index][jugador]['victoria'] = True
+                equipos[index][jugador]['victoria'] = 0 # False
             else:
-                equipos[index][jugador]['victoria'] = False
+                equipos[index][jugador]['victoria'] = 1 # True
             id_color = str(sumario.get_players()[jugador-1]['color_id'])
             equipos[index][jugador]['color'] = mgz.reference.get_consts()['player_colors'][id_color]
     info['equipos'] = equipos
@@ -51,6 +56,7 @@ def get_info(input_file:str) -> dict():
     return info
 
 if __name__== "__main__":
+    color_en_to_es = {'Blue':'Azul', 'Red':'Rojo', 'Green':'Verde', 'Yellow':'Amarillo', 'Teal':'Celeste', 'Purple':'Morado', 'Gray':'Gris', 'Orange':'Naranja'}
     input_file = glob.glob('*.mgx')[0]
     info = get_info(input_file)
     print(f"Info sobre la partida grabada '{info['nombre_archivo']}'")
@@ -63,18 +69,22 @@ if __name__== "__main__":
     print(f"Velocidad del juego: {info['velocidad']}")
     print(f"Población máxima: {info['poblacion']}")
     print(f"Diplomacia: {info['diplomacia']}")
+    info['bloqueo_diplomacia_equipos'] = 'Bloqueado' if info['bloqueo_diplomacia_equipos'] else 'Desbloqueado'
+    print(f"Cambio de diplomacia: {info['bloqueo_diplomacia_equipos']}")
+    print(f"Difucultad: {info['dificultad']}")
     if info['teams']:
         print(f"Diplomacia de los equipos: {info['teams']}")
-    print()
+    
     for indice, equipo in info['equipos'].items():
+        print()
         print(f'Equipo {indice}')
         for jugador, dato in equipo.items():
-            print(f'{jugador}) ', end='')
-            print(dato['nickname'], end=' - ')
-            print(dato['civ'], end=' - ')
-            print(dato['color'])
+            print(f'{jugador}- ', end='')
+            print(dato['nickname'], end=': ')
+            print(dato['civ'], end=' ')
+            color = color_en_to_es[dato['color']]
+            print(f"({color})")
             if dato['victoria']:
-                print('Equipo ganador de la partida.')
+                print('Jugador gana de la partida.')
             else:
-                print('Equipo pierde esta ronda.')
-        print()
+                print('Jugador pierde o se rinde de la partida.')
