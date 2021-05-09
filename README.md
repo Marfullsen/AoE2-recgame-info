@@ -9,6 +9,10 @@ Get important information about Age of Empires 2 recorded games.
 ## Description
 Get important info about the recorded games like map, time played, teams, and many more.
 
+## Last changes
+- Now into the info dic you can find the color_cod & the civ_cod!
+- The code and the file structure was tidied up.
+
 ## Dependencies
 - [mgz](https://github.com/happyleavesaoc/aoc-mgz) (Also via pip: `pip install mgz`)
 
@@ -23,3 +27,4 @@ This project will be part of the Warriors Clan webpage, and will be merged with 
 - Mgz [github.com/happyleavesaoc/aoc-mgz](https://github.com/happyleavesaoc/aoc-mgz)
 - RecAnalyst [github.com/goto-bus-stop/recanalyst](https://github.com/goto-bus-stop/recanalyst)
 - RecGames [github.com/goto-bus-stop/recgames](https://github.com/goto-bus-stop/recgames)
+- Intercalador [github.com/Marfullsen/intercalador](https://github.com/Marfullsen/intercalador)
