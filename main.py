@@ -21,7 +21,8 @@ def get_info(input_file:str) -> dict():
     info['velocidad'] = en_es['game_speeds'][sumario.get_settings()['speed'][1].capitalize()]
     info['poblacion'] = sumario.get_settings()['population_limit']
     info['diplomacia'] = sumario.get_diplomacy()['type']
-    info['nombre_mapa'] = en_es['map_names'][sumario.get_map()['name']]
+    try: info['nombre_mapa'] = en_es['map_names'][sumario.get_map()['name']]
+    except KeyError: info['nombre_mapa'] = sumario.get_map()['name']
     info['tamano_mapa'] = sumario.get_map()['size'].capitalize()
     info['bloqueo_diplomacia_equipos'] = 1 if sumario.get_settings()['lock_teams'] else 0
     info['dificultad'] = en_es['difficulties'][sumario.get_settings()['difficulty'][1].capitalize()]
